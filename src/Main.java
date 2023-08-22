@@ -1,5 +1,4 @@
 
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
@@ -12,6 +11,8 @@ import java.util.stream.Collectors;
 
 
 public class Main {
+    private static ArrayList<File> listWithFileNames = new ArrayList<>();
+
     public static void createDirectory(String adres) {
         File dir = new File(adres);
         if (dir.mkdir()) {
@@ -31,22 +32,28 @@ public class Main {
 
     }
 
-    //    private static String S1;
-    private static ArrayList<File> listWithFileNames = new ArrayList<>();
 
     public static void getListFiles(String str) {
         File f = new File(str);
         for (File s : f.listFiles()) {
             if (s.isFile()) {
                 listWithFileNames.add(s);
-//                S1= S1+" "+ s.getName();
             } else if (s.isDirectory()) {
                 listWithFileNames.add(s);
-//               S1= S1+" " + s.getName();
                 getListFiles(s.getAbsolutePath());
             }
         }
 
+    }
+
+    public static void makeFile(String adress) {
+        try (FileWriter writer = new FileWriter(adress, false)) {
+            writer.write(String.valueOf(listWithFileNames));
+            writer.append('\n');
+            writer.append("Каталоги и файлы успешно созданы!");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void main(String[] args) {
@@ -62,24 +69,9 @@ public class Main {
         createDirectory("C:\\Games\\res\\vectors");
         createDirectory("C:\\Games\\res\\icons");
         createFile("C:\\Games\\temp", "temp.txt");
-        StringBuilder catalog = new StringBuilder();
-        String path = "C:\\Games";
-        File dir = new File(path);
-
         getListFiles("C:\\Games");
-
         System.out.println(listWithFileNames);
-        try (FileWriter writer = new FileWriter("C:\\Games\\temp\\temp.txt", false)) {
-            writer.write(String.valueOf(listWithFileNames));
-            writer.append('\n');
-            writer.append("Каталоги и файлы успешно созданы!");
-
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-
+        makeFile("C:\\Games\\temp\\temp.txt");
     }
 }
 
